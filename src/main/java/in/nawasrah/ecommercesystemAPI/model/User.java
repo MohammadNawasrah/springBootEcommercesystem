@@ -11,6 +11,7 @@ import java.util.Date;
 public class User {
     private long users_id;
     private String users_name;
+    private String users_password;
     private String users_email;
     private int users_verifycode;
     private boolean users_approve;

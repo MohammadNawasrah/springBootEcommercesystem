@@ -17,14 +17,16 @@ public class UserRepos implements RepositoryDB<User> {
     private DbSql dbSql;
     private Connection con;
 
-    User setUser(User user, ResultSet employees) {
+    User setUser(User user, ResultSet users) {
         try {
-            user.setUsers_id(employees.getLong("users_id"));
-            user.setUsers_name(employees.getString("users_name"));
-            user.setUsers_email(employees.getString("users_email"));
-            user.setUser_create(employees.getDate("user_create"));
-            user.setUsers_verifycode(employees.getInt("users_verifycode"));
-            user.setUsers_approve(employees.getBoolean("users_approve"));
+            user.setUsers_id(users.getLong("users_id"));
+            user.setUsers_name(users.getString("users_name"));
+            user.setUsers_password(users.getString("users_password"));
+            user.setUsers_name(users.getString("users_name"));
+            user.setUsers_email(users.getString("users_email"));
+            user.setUser_create(users.getDate("user_create"));
+            user.setUsers_verifycode(users.getInt("users_verifycode"));
+            user.setUsers_approve(users.getBoolean("users_approve"));
             return user;
         } catch (Exception exception) {
             System.out.println(exception);
@@ -38,6 +40,7 @@ public class UserRepos implements RepositoryDB<User> {
         String sql = "CREATE TABLE IF NOT EXISTS users (" +
                 "  users_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                 "  users_name TEXT NOT NULL," +
+                "  users_password TEXT NOT NULL," +
                 "  users_email TEXT NOT NULL," +
                 "  users_verifycode INTEGER," +
                 " user_create TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
@@ -110,8 +113,8 @@ public class UserRepos implements RepositoryDB<User> {
     @Override
     public boolean updateById(User user, long id) {
         try {
-            String sql = "UPDATE users SET users_name ='%s',users_email='%s' , users_verifycode =%d, users_approve =%b WHERE users_id=%d";
-            String sqlF = String.format(sql, user.getUsers_name(), user.getUsers_email(), user.getUsers_verifycode(), user.isUsers_approve()
+            String sql = "UPDATE users SET users_name ='%s',users_password='%s',users_email='%s' , users_verifycode =%d, users_approve =%b WHERE users_id=%d";
+            String sqlF = String.format(sql, user.getUsers_name(), user.getUsers_password(), user.getUsers_email(), user.getUsers_verifycode(), user.isUsers_approve()
                     , id);
             if (connection() != null) {
                 boolean ifUpdate = dbSql.update(sqlF, connection());
@@ -126,8 +129,8 @@ public class UserRepos implements RepositoryDB<User> {
 
     @Override
     public String ifExistsUser(User user) {
-        List<User> allUsers=new ArrayList<>();
-        allUsers= findAll();
+        List<User> allUsers = new ArrayList<>();
+        allUsers = findAll();
         for (User users : allUsers) {
             if (users.getUsers_email().equals(user.getUsers_email()))
                 return "Your Email is already exist";
@@ -154,8 +157,8 @@ public class UserRepos implements RepositoryDB<User> {
     @Override
     public boolean insert(User user) {
         try {
-            String sql = "INSERT INTO users (users_name,users_email,users_verifycode)VALUES(\"%s\",\"%s\",%d)";
-            String sqlF = String.format(sql, user.getUsers_name(), user.getUsers_email(), user.getUsers_verifycode()
+            String sql = "INSERT INTO users (users_name,users_password,users_email,users_verifycode)VALUES(\"%s\",\"%s\",\"%s\",%d)";
+            String sqlF = String.format(sql, user.getUsers_name(), user.getUsers_password(), user.getUsers_email(), user.getUsers_verifycode()
                     , user.getUsers_verifycode());
             if (connection() != null) {
                 boolean ifInsert = dbSql.insert(sqlF, connection());
