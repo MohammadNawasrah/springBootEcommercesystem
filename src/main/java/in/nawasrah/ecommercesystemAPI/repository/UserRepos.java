@@ -118,14 +118,29 @@ public class UserRepos implements RepositoryDB<User> {
     }
 
     @Override
-    public String ifExistsUser(User user) {
+    public String ifExistsUser(String email) {
         List<User> allUsers = new ArrayList<>();
         allUsers = findAll();
         for (User users : allUsers) {
-            if (users.getUsers_email().equals(user.getUsers_email()))
+            if (users.getUsers_email().equals(email))
                 return "Your Email is already exist";
         }
-        return "Done save";
+        return "not Exist";
+    }
+
+    public String checkPassword(String email, String password) {
+        CyberPassword cyberPassword=new CyberPassword();
+        List<User> allUsers = new ArrayList<>();
+        allUsers = findAll();
+        for (User users : allUsers) {
+            if (users.getUsers_email().equals(email)) {
+                if (password.equals(users.getUsers_password()))
+                    return "correctPassword";
+                else
+                    return "notCorrectPassword";
+            }
+        }
+        return "not Exist";
     }
 
 //    @Override

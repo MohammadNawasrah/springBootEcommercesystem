@@ -8,7 +8,7 @@ public interface RepositoryDB<T> {
     List<T> findAll();
     T findById(long id);
     boolean updateById(T data, long id);
-    String ifExistsUser(T data);
+    String ifExistsUser(String email);
 //    boolean remove(long id);
     boolean insert(T data);
 }
