@@ -4,12 +4,14 @@ import in.nawasrah.ecommercesystemAPI.model.User;
 import in.nawasrah.ecommercesystemAPI.repository.UserRepos;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class UserService extends UserRepos {
-//    public List<Employee> getAllEmployee() {
-//        return findAll();
-//    }
+    public List<User> getAllUsers() {
+        return findAll();
+    }
 
     public User getUserById(long id) {
         return findById(id);

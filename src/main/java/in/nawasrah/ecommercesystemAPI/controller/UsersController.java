@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 
 @RequestMapping(value = "/users")
@@ -16,21 +17,21 @@ import java.io.IOException;
 public class UsersController {
     @Autowired
     UserService userService;
-@GetMapping("")
-    public String createDB(){
-//    userRepos.connection();
-    return "done";
-}
-//    @GetMapping("")
-//    public List<Employee> displayEmployees(HttpServletResponse httpResponse) throws IOException {
-//        List<Employee> employees = employeeService.getAllEmployee();
-//        if (employees != null) {
-//            return employees;
-//        } else {
-//            httpResponse.sendRedirect("error");
-//            return null;
-//        }
-//    }
+//@GetMapping("")
+//    public String createDB(){
+////    userRepos.connection();
+//    return "done";
+//}
+    @GetMapping("")
+    public List<User> displayEmployees(HttpServletResponse httpResponse) throws IOException {
+        List<User> employees = userService.getAllUsers();
+        if (employees != null) {
+            return employees;
+        } else {
+            httpResponse.sendRedirect("error");
+            return null;
+        }
+    }
 
     @GetMapping("/error")
     public String error() {
