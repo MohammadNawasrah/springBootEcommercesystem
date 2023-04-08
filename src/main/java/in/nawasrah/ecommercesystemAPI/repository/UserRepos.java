@@ -1,5 +1,6 @@
 package in.nawasrah.ecommercesystemAPI.repository;
 
+import in.nawasrah.ecommercesystemAPI.core.Cyber.CyberPassword;
 import in.nawasrah.ecommercesystemAPI.database.DbSql;
 import in.nawasrah.ecommercesystemAPI.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,10 @@ public class UserRepos implements RepositoryDB<User> {
 
     User setUser(User user, ResultSet users) {
         try {
+            CyberPassword cyberPassword = new CyberPassword();
             user.setUsers_id(users.getLong("users_id"));
             user.setUsers_name(users.getString("users_name"));
-            user.setUsers_password(users.getString("users_password"));
+            user.setUsers_password(cyberPassword.decryption(users.getString("users_password")));
             user.setUsers_name(users.getString("users_name"));
             user.setUsers_email(users.getString("users_email"));
             user.setUser_create(users.getDate("user_create"));
@@ -50,19 +52,6 @@ public class UserRepos implements RepositoryDB<User> {
         return con;
     }
 
-//    Employee setEmployee(Employee e, ResultSet employees) {
-//        try {
-//            e.setId(employees.getLong("id"));
-//            e.setName(employees.getString("name"));
-//            e.setAge(employees.getInt("age"));
-//            e.setLocation(employees.getString("location"));
-//            e.setEmail(employees.getString("email"));
-//            e.setDepartment(employees.getString("department"));
-//            return e;
-//        } catch (Exception exception) {
-//            return null;
-//        }
-//    }
 
     @Override
     public List<User> findAll() {
@@ -113,8 +102,9 @@ public class UserRepos implements RepositoryDB<User> {
     @Override
     public boolean updateById(User user, long id) {
         try {
+            CyberPassword cyberPassword = new CyberPassword();
             String sql = "UPDATE users SET users_name ='%s',users_password='%s',users_email='%s' , users_verifycode =%d, users_approve =%b WHERE users_id=%d";
-            String sqlF = String.format(sql, user.getUsers_name(), user.getUsers_password(), user.getUsers_email(), user.getUsers_verifycode(), user.isUsers_approve()
+            String sqlF = String.format(sql, user.getUsers_name(), cyberPassword.encryption(user.getUsers_password()), user.getUsers_email(), user.getUsers_verifycode(), user.isUsers_approve()
                     , id);
             if (connection() != null) {
                 boolean ifUpdate = dbSql.update(sqlF, connection());
@@ -156,9 +146,10 @@ public class UserRepos implements RepositoryDB<User> {
 
     @Override
     public boolean insert(User user) {
+        CyberPassword cyberPassword = new CyberPassword();
         try {
             String sql = "INSERT INTO users (users_name,users_password,users_email,users_verifycode)VALUES(\"%s\",\"%s\",\"%s\",%d)";
-            String sqlF = String.format(sql, user.getUsers_name(), user.getUsers_password(), user.getUsers_email(), user.getUsers_verifycode()
+            String sqlF = String.format(sql, user.getUsers_name(), cyberPassword.encryption(user.getUsers_password()), user.getUsers_email(), user.getUsers_verifycode()
                     , user.getUsers_verifycode());
             if (connection() != null) {
                 boolean ifInsert = dbSql.insert(sqlF, connection());
