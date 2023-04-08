@@ -18,8 +18,8 @@ public class UserService extends UserRepos {
     }
 
     public String saveUser(User user) {
-        String isAlreadyExist=ifExistsUser(user);
-        if (isAlreadyExist.equals("Done save")) {
+        String isAlreadyExist = ifExistsUser(user.getUsers_email());
+        if (isAlreadyExist.equals("not Exist")) {
             if (insert(user))
                 return "Done Save";
             else
@@ -35,10 +35,11 @@ public class UserService extends UserRepos {
             return "error";
     }
 
-//    public String deleteEmployee(long id) {
-//        if (remove(id))
-//            return "Done remove";
-//        else
-//            return "error";
-//    }
+    public String signin(String email, String password) {
+        String ifExistEmail = ifExistsUser(email);
+        if (!ifExistEmail.equals("not Exist")) {
+            return checkPassword(email, password);
+        }
+        return ifExistEmail;
+    }
 }

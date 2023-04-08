@@ -1,5 +1,6 @@
 package in.nawasrah.ecommercesystemAPI.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import in.nawasrah.ecommercesystemAPI.model.User;
 import in.nawasrah.ecommercesystemAPI.repository.UserRepos;
 import in.nawasrah.ecommercesystemAPI.service.UserService;
@@ -8,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.sql.Types;
 import java.util.List;
+import java.util.Map;
 
 
 @RequestMapping(value = "/users")
@@ -17,7 +20,8 @@ import java.util.List;
 public class UsersController {
     @Autowired
     UserService userService;
-//@GetMapping("")
+
+    //@GetMapping("")
 //    public String createDB(){
 ////    userRepos.connection();
 //    return "done";
@@ -37,7 +41,8 @@ public class UsersController {
     public String error() {
         return "error";
     }
-//
+
+    //
     @GetMapping("/user/{id}")
     public User displayUser(@PathVariable("id") Long id, HttpServletResponse httpResponse) throws IOException {
         User user = userService.getUserById(id);
@@ -48,15 +53,23 @@ public class UsersController {
             return null;
         }
     }
-//
+
+    //
     @PostMapping("/signup")
-    public String saveNewUser(@RequestBody User user ,HttpServletResponse httpResponse) throws IOException {
+    public String signup(@RequestBody User user, HttpServletResponse httpResponse) throws IOException {
         String response = userService.saveUser(user);
         return response;
     }
+
+    @PostMapping("/signin")
+    public String signin(@RequestBody Map  data, HttpServletResponse httpResponse) throws IOException {
+        String response = userService.signin(data.get("email").toString(), data.get("password").toString());
+        return response;
+    }
+
     @PutMapping("/user/{id}")
-    public String updateEmployee(@PathVariable("id") long id,@RequestBody User employee ,HttpServletResponse httpResponse) throws IOException {
-        String e = userService.updateEmployee(employee,id);
+    public String updateEmployee(@PathVariable("id") long id, @RequestBody User employee, HttpServletResponse httpResponse) throws IOException {
+        String e = userService.updateEmployee(employee, id);
         return e;
     }
 //    @DeleteMapping("/employee")
