@@ -1,6 +1,8 @@
 package in.nawasrah.ecommercesystemAPI.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import in.nawasrah.ecommercesystemAPI.core.email.Email;
+import in.nawasrah.ecommercesystemAPI.core.email.Gmail;
 import in.nawasrah.ecommercesystemAPI.model.User;
 import in.nawasrah.ecommercesystemAPI.repository.UserRepos;
 import in.nawasrah.ecommercesystemAPI.service.UserService;
@@ -20,6 +22,23 @@ import java.util.Map;
 public class UsersController {
     @Autowired
     UserService userService;
+    @Autowired
+    private Email gmail=new Gmail();
+
+    @GetMapping("/send-email/{id}")
+    public String sendEmail(@PathVariable("id") String to  ) {
+        try {
+            String subject = "welcome in my app";
+            String text = "your verify code is 88888";
+
+                gmail.sendEmail(to, subject, text);
+
+            return "Email sent successfully.";
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return "error";
+        }
+    }
 
     //@GetMapping("")
 //    public String createDB(){
@@ -28,6 +47,12 @@ public class UsersController {
 //}
     @GetMapping("")
     public List<User> displayEmployees(HttpServletResponse httpResponse) throws IOException {
+//        try {
+//            gmail.sendEmail("nawasrahmohammad2000@gmail.com",
+//                    "hello me", "hi mohammad al nawasrah how are you");
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
         List<User> employees = userService.getAllUsers();
         if (employees != null) {
             return employees;
@@ -62,7 +87,7 @@ public class UsersController {
     }
 
     @PostMapping("/signin")
-    public String signin(@RequestBody Map  data, HttpServletResponse httpResponse) throws IOException {
+    public String signin(@RequestBody Map data, HttpServletResponse httpResponse) throws IOException {
         String response = userService.signin(data.get("email").toString(), data.get("password").toString());
         return response;
     }
