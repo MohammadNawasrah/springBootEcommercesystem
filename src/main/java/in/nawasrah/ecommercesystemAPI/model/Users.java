@@ -6,8 +6,8 @@ import lombok.ToString;
 
 import java.util.Date;
 
-@Getter
 @Setter
+@Getter
 @ToString
 public class Users {
     private long users_id;

@@ -137,10 +137,13 @@ public class UserRepos implements RepositoryDB<Users> {
         allUsers = findAll();
         for (Users users : allUsers) {
             if (users.getUsers_email().equals(email)) {
-                if (password.equals(users.getUsers_password()))
-                    return "correctPassword";
-                else
-                    return "notCorrectPassword";
+                if (password.equals(users.getUsers_password())) {
+                    System.out.println(users.isUsers_approve());
+                    if (users.isUsers_approve())
+                        return "correctPassword";
+                    else
+                        return "notCorrectPassword";
+                }
             }
         }
         return "not Exist";
