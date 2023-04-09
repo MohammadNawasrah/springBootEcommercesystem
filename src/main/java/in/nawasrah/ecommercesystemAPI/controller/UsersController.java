@@ -24,10 +24,10 @@ public class UsersController {
     public String sendEmail(@RequestBody Map<String, String> sentEmail) {
         try {
             gmail.sendEmail(sentEmail.get("toEmail"), sentEmail.get("subject"), "i love you " + Math.round(Math.random() * 500));
-            return "Email sent successfully.";
+            return "Email Send Successfully.";
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return "error";
+            return "Error";
         }
     }
 
@@ -37,7 +37,7 @@ public class UsersController {
         Long randomVerifyCode=Math.round(10000 + Math.random() * 99999);
         userService.updateUser("users_verifycode",randomVerifyCode, "users_email", users.getUsers_email());
         gmail.sendEmail(users.getUsers_email(),"Ecommercesystem verifyCode","your code is : "+randomVerifyCode);
-        return "Done Signup";
+        return "Done Signup Just Need VerifyCode";
     }
 
     @PostMapping("/where")
@@ -48,7 +48,7 @@ public class UsersController {
     @PostMapping("/signin")
     public String signin(@RequestBody Map data, HttpServletResponse httpResponse) throws IOException {
         String response = userService.signin(data.get("email").toString(), data.get("password").toString());
-        return response.equals("correctPassword") ?   "correct login":"error in password or email";
+        return response;
     }
 
     @PostMapping("/generateVerifyCode")
@@ -59,9 +59,11 @@ public class UsersController {
     @PostMapping("/checkVerifyCode")
     public String checkVerifyCode(@RequestBody Map<String, Object> data, HttpServletResponse httpResponse) throws IOException {
         String response = userService.checkVerifyCode(data.get("users_email").toString(), data.get("users_verifycode"));
-        if (response.equals("correctVerifyCode")) {
+        if (response.equals("Correct VerifyCode")) {
             userService.updateUser("users_approve",true, "users_email",  data.get("users_email").toString());
             userService.updateUser("users_verifycode", 0, "users_email", data.get("users_email").toString());
-        } return response;
+            return response;
+        }
+        return response;
     }
 }

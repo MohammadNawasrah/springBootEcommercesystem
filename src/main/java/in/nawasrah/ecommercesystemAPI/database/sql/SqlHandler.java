@@ -38,7 +38,7 @@ public class SqlHandler {
                 return "error";
             }
         }
-        return "table has already exist";
+        return "Table " + tableName + " Has Already Exist";
 
     }
 
@@ -57,8 +57,7 @@ public class SqlHandler {
         format = String.format(query, tableName, column, value, key, email);
         try {
             Statement stmt = dbConnectionImp.connection().createStatement();
-            stmt.executeUpdate(format);
-            return true;
+            return stmt.execute(format);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return false;
@@ -66,10 +65,13 @@ public class SqlHandler {
 
     }
 
-    public void insertData(String tableName, String values) throws SQLException {
+    public boolean insertData(String tableName, String values) throws SQLException {
         String query = "INSERT INTO " + tableName + " VALUES (" + values + ")";
-        try (Statement stmt = dbConnectionImp.connection().createStatement()) {
-            stmt.executeUpdate(query);
+        try {
+            Statement stmt = dbConnectionImp.connection().createStatement();
+            return stmt.execute(query);
+        } catch (SQLException e) {
+            return false;
         }
     }
 

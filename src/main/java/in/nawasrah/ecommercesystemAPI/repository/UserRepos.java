@@ -27,8 +27,6 @@ public class UserRepos implements RepositoryDB<Users> {
     }
 
     private String createUsersTable() throws SQLException {
-
-
         return sqlHandler.createTable("users", "" +
                 "users_id INTEGER PRIMARY KEY AUTOINCREMENT ," +
                 "users_name TEXT NOT NULL," +
@@ -110,10 +108,10 @@ public class UserRepos implements RepositoryDB<Users> {
         if (allUsers != null)
             for (Users users : allUsers) {
                 if (users.getUsers_email().equals(email)) {
-                    return "Your Email is already exist";
+                    return "Exist Email";
                 }
             }
-        return "Done Save";
+        return "Not Exist Email";
     }
 
     @Override
@@ -121,14 +119,14 @@ public class UserRepos implements RepositoryDB<Users> {
         CyberPassword cyberPassword = new CyberPassword();
         String existsUser = ifExistsEmail(user.getUsers_email());
         String tableName = "users";
-        if (existsUser.equals("Done Save")) {
+        if (existsUser.equals("Not Exist Email")) {
             String sqlQ = "null,\"%s\",\"%s\",\"%s\",0,CURRENT_DATE,false ";
             String sqlF = String.format(sqlQ, user.getUsers_name()
                     , cyberPassword.encryption(user.getUsers_password()), user.getUsers_email());
             sqlHandler.insertData(tableName, sqlF);
-            return existsUser;
+            return "Congratulation Create Email";
         }
-        return existsUser;
+        return "Email Is Already Exist";
     }
 
     public String checkPassword(String email, String password) {
@@ -138,15 +136,17 @@ public class UserRepos implements RepositoryDB<Users> {
         for (Users users : allUsers) {
             if (users.getUsers_email().equals(email)) {
                 if (password.equals(users.getUsers_password())) {
-                    System.out.println(users.isUsers_approve());
                     if (users.isUsers_approve())
-                        return "correctPassword";
+                        return "Correct Password";
                     else
-                        return "notCorrectPassword";
+                        return "Your Email Not Approve";
                 }
+                    else
+                        return "Not Correct Password";
+
             }
         }
-        return "not Exist";
+        return "Not Exist Email";
     }
     public String checkVerifyCode(String email, Object verifyCode) {
         List<Users> allUsers = new ArrayList<>();
@@ -154,23 +154,23 @@ public class UserRepos implements RepositoryDB<Users> {
         for (Users users : allUsers) {
             if (users.getUsers_email().equals(email)) {
                 if (verifyCode.equals(users.getUsers_verifycode()))
-                    return "correctVerifyCode";
+                    return "Correct VerifyCode";
                 else
-                    return "notCorrectVerifyCode";
+                    return "Not Correct VerifyCode";
             }
         }
-        return "not Exist";
+        return "Not Exist Email";
     }
 
     @Override
     public String updateByEmail(String column, Object value, String key, String email) {
         String existsUser = ifExistsEmail(email);
         String tableName = "users";
-        if (existsUser.equals("Your Email is already exist")) {
+        if (existsUser.equals("Exist Email")) {
             sqlHandler.updateData(tableName,column,value,key,email);
-            return "done update";
+            return "Done Update";
         }
-        return "update error";
+        return "Not Exist Email";
     }
 }
 
