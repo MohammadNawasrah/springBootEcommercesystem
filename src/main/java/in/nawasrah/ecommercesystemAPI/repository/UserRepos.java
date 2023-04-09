@@ -122,10 +122,9 @@ public class UserRepos implements RepositoryDB<Users> {
         String existsUser = ifExistsEmail(user.getUsers_email());
         String tableName = "users";
         if (existsUser.equals("Done Save")) {
-            String sqlQ = "null,\"%s\",\"%s\",\"%s\",%d,CURRENT_DATE,false ";
+            String sqlQ = "null,\"%s\",\"%s\",\"%s\",0,CURRENT_DATE,false ";
             String sqlF = String.format(sqlQ, user.getUsers_name()
-                    , cyberPassword.encryption(user.getUsers_password()), user.getUsers_email()
-                    , user.getUsers_verifycode());
+                    , cyberPassword.encryption(user.getUsers_password()), user.getUsers_email());
             sqlHandler.insertData(tableName, sqlF);
             return existsUser;
         }
@@ -145,6 +144,30 @@ public class UserRepos implements RepositoryDB<Users> {
             }
         }
         return "not Exist";
+    }
+    public String checkVerifyCode(String email, Object verifyCode) {
+        List<Users> allUsers = new ArrayList<>();
+        allUsers = findAll();
+        for (Users users : allUsers) {
+            if (users.getUsers_email().equals(email)) {
+                if (verifyCode.equals(users.getUsers_verifycode()))
+                    return "correctVerifyCode";
+                else
+                    return "notCorrectVerifyCode";
+            }
+        }
+        return "not Exist";
+    }
+
+    @Override
+    public String updateByEmail(String column, Object value, String key, String email) {
+        String existsUser = ifExistsEmail(email);
+        String tableName = "users";
+        if (existsUser.equals("Your Email is already exist")) {
+            sqlHandler.updateData(tableName,column,value,key,email);
+            return "done update";
+        }
+        return "update error";
     }
 }
 

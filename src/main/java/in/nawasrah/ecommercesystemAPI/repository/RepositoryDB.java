@@ -16,4 +16,5 @@ public interface RepositoryDB<T> {
     String insertUser(T data) throws SQLException;
 
     String checkPassword(String email, String password);
+    String updateByEmail(String column, Object value, String key, String email);
 }

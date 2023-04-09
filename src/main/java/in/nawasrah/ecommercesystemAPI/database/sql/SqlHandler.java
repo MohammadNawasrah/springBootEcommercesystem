@@ -42,6 +42,30 @@ public class SqlHandler {
 
     }
 
+    public boolean updateData(String tableName, String column, Object value, String key, String email) {
+        String query = "", format = "";
+        if (value.getClass().toString().equals("class java.lang.Integer") || value.getClass().toString().equals("class java.lang.Long")) {
+            query = "UPDATE %s SET %s=%d WHERE %s=\'%s\'";
+        }
+        if (value.getClass().toString().equals("class java.lang.String")) {
+            query = "UPDATE %s SET %s=\'%s\' WHERE %s=\'%s\'";
+        }
+        if (value.getClass().toString().equals("class java.lang.Boolean")) {
+            query = "UPDATE %s SET %s=%b WHERE %s=\'%s\'";
+
+        }
+        format = String.format(query, tableName, column, value, key, email);
+        try {
+            Statement stmt = dbConnectionImp.connection().createStatement();
+            stmt.executeUpdate(format);
+            return true;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+
+    }
+
     public void insertData(String tableName, String values) throws SQLException {
         String query = "INSERT INTO " + tableName + " VALUES (" + values + ")";
         try (Statement stmt = dbConnectionImp.connection().createStatement()) {
@@ -50,6 +74,7 @@ public class SqlHandler {
     }
 
     public ResultSet selectData(String tableName) throws SQLException {
+
         String query = "SELECT * FROM " + tableName;
         try {
             Statement statement = dbConnectionImp.connection().createStatement();
