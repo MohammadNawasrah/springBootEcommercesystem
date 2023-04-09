@@ -1,14 +1,19 @@
 package in.nawasrah.ecommercesystemAPI.repository;
+
 import org.springframework.stereotype.Repository;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Repository
 public interface RepositoryDB<T> {
     List<T> findAll();
-    T findById(long id);
-    boolean updateById(T data, long id);
-    String ifExistsUser(String email);
-//    boolean remove(long id);
-    boolean insert(T data);
+
+    T findByWhere(String column, Object data);
+
+    String ifExistsEmail(String data);
+
+    String insertUser(T data) throws SQLException;
+
+    String checkPassword(String email, String password);
 }

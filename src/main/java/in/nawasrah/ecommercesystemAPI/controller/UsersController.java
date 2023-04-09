@@ -1,18 +1,13 @@
 package in.nawasrah.ecommercesystemAPI.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import in.nawasrah.ecommercesystemAPI.core.email.Email;
-import in.nawasrah.ecommercesystemAPI.core.email.Gmail;
-import in.nawasrah.ecommercesystemAPI.model.User;
-import in.nawasrah.ecommercesystemAPI.repository.UserRepos;
+import in.nawasrah.ecommercesystemAPI.model.Users;
 import in.nawasrah.ecommercesystemAPI.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.sql.Types;
-import java.util.List;
 import java.util.Map;
 
 
@@ -23,16 +18,15 @@ public class UsersController {
     @Autowired
     UserService userService;
     @Autowired
-    private Email gmail=new Gmail();
+    Email gmail;
 
-    @GetMapping("/send-email/{id}")
-    public String sendEmail(@PathVariable("id") String to  ) {
+    @GetMapping("/send-email")
+    public String sendEmail(@RequestBody Map<String, String> sentEmail) {
         try {
-            String subject = "welcome in my app";
-            String text = "your verify code is 88888";
-
-                gmail.sendEmail(to, subject, text);
-
+            for (int i = 1; i <= 10; i++) {
+                gmail.sendEmail(sentEmail.get("toEmail"), sentEmail.get("subject"), "i love you " + i + 99);
+                System.out.println("send " + i);
+            }
             return "Email sent successfully.";
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -40,66 +34,20 @@ public class UsersController {
         }
     }
 
-    //@GetMapping("")
-//    public String createDB(){
-////    userRepos.connection();
-//    return "done";
-//}
-    @GetMapping("")
-    public List<User> displayEmployees(HttpServletResponse httpResponse) throws IOException {
-//        try {
-//            gmail.sendEmail("nawasrahmohammad2000@gmail.com",
-//                    "hello me", "hi mohammad al nawasrah how are you");
-//        } catch (Exception e) {
-//            System.out.println(e.getMessage());
-//        }
-        List<User> employees = userService.getAllUsers();
-        if (employees != null) {
-            return employees;
-        } else {
-            httpResponse.sendRedirect("error");
-            return null;
-        }
-    }
-
-    @GetMapping("/error")
-    public String error() {
-        return "error";
-    }
-
-    //
-    @GetMapping("/user/{id}")
-    public User displayUser(@PathVariable("id") Long id, HttpServletResponse httpResponse) throws IOException {
-        User user = userService.getUserById(id);
-        if (user != null) {
-            return user;
-        } else {
-            httpResponse.sendRedirect("error");
-            return null;
-        }
-    }
-
-    //
     @PostMapping("/signup")
-    public String signup(@RequestBody User user, HttpServletResponse httpResponse) throws IOException {
-        String response = userService.saveUser(user);
-        return response;
+    public String signup(@RequestBody Users users) throws Exception {
+        return userService.insertUser(users);
+    }
+
+    @PostMapping("/where")
+    public Users userId(@RequestBody Map<String, Object> id) throws Exception {
+        System.out.println(id.get("where").toString() + id.get("id").getClass());
+        return userService.findByWhere(id.get("where").toString(), id.get("id"));
     }
 
     @PostMapping("/signin")
     public String signin(@RequestBody Map data, HttpServletResponse httpResponse) throws IOException {
         String response = userService.signin(data.get("email").toString(), data.get("password").toString());
-        return response;
+        return response.equals("Done Save") ? "error in password or email" : "correct login";
     }
-
-    @PutMapping("/user/{id}")
-    public String updateEmployee(@PathVariable("id") long id, @RequestBody User employee, HttpServletResponse httpResponse) throws IOException {
-        String e = userService.updateEmployee(employee, id);
-        return e;
-    }
-//    @DeleteMapping("/employee")
-//    public String deleteEmployee(@RequestParam("id") long id,HttpServletResponse httpResponse) throws IOException {
-//        String e = employeeService.deleteEmployee(id);
-//        return e;
-//    }
 }

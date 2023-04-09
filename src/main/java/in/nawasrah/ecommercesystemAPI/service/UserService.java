@@ -1,45 +1,43 @@
 package in.nawasrah.ecommercesystemAPI.service;
 
-import in.nawasrah.ecommercesystemAPI.model.User;
+import in.nawasrah.ecommercesystemAPI.model.Users;
 import in.nawasrah.ecommercesystemAPI.repository.UserRepos;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.sql.SQLException;
 
 
 @Service
-public class UserService extends UserRepos {
-    public List<User> getAllUsers() {
-        return findAll();
-    }
+public class UserService {
+    @Autowired
+    UserRepos userRepos;
 
-    public User getUserById(long id) {
-        return findById(id);
-    }
-
-    public String saveUser(User user) {
-        String isAlreadyExist = ifExistsUser(user.getUsers_email());
-        if (isAlreadyExist.equals("not Exist")) {
-            if (insert(user))
-                return "Done Save";
-            else
-                return "error";
+    public String insertUser(Users user) {
+        String userR = "";
+        try {
+            userR = userRepos.insertUser(user);
+            return userR;
+        } catch (SQLException e) {
+            return userR;
         }
-        return isAlreadyExist;
+
     }
 
-    public String updateEmployee(User user, long id) {
-        if (updateById(user, id))
-            return "Done update";
-        else
-            return "error";
+    public Users findByWhere(String column, Object data) {
+        Users userR = null;
+        userR = userRepos.findByWhere(column, data);
+        return userR;
+
     }
 
     public String signin(String email, String password) {
-        String ifExistEmail = ifExistsUser(email);
-        if (!ifExistEmail.equals("not Exist")) {
-            return checkPassword(email, password);
+        String ifExistEmail = userRepos.ifExistsEmail(email);
+        if (!ifExistEmail.equals("Done Save")) {
+            return userRepos.checkPassword(email, password);
         }
         return ifExistEmail;
     }
+
+
 }
