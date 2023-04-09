@@ -33,10 +33,10 @@ public class UserService {
 
     public String signin(String email, String password) {
         String ifExistEmail = userRepos.ifExistsEmail(email);
-        if (!ifExistEmail.equals("Done Save")) {
+        if (ifExistEmail.equals("Exist Email")) {
             return userRepos.checkPassword(email, password);
         }
-        return ifExistEmail;
+        return "Not Exist Email";
     }
 
     public String updateUser(String column, Object value, String key, String email) {
