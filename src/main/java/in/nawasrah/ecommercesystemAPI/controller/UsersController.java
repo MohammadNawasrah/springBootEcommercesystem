@@ -48,7 +48,7 @@ public class UsersController {
     @PostMapping("/signin")
     public String signin(@RequestBody Map data, HttpServletResponse httpResponse) throws IOException {
         String response = userService.signin(data.get("email").toString(), data.get("password").toString());
-        return response.equals("Done Save") ? "error in password or email" : "correct login";
+        return response.equals("correctPassword") ?   "correct login":"error in password or email";
     }
 
     @PostMapping("/generateVerifyCode")
