@@ -39,5 +39,12 @@ public class UserService {
         return ifExistEmail;
     }
 
+    public String updateUser(String column, Object value, String key, String email) {
+        return userRepos.updateByEmail(column, value, key, email);
+    }
+    public String checkVerifyCode(String email, Object verifyCode) {
+        return userRepos.checkVerifyCode(email,verifyCode);
+    }
+
 
 }

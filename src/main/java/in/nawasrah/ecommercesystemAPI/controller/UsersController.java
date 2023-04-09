@@ -23,10 +23,7 @@ public class UsersController {
     @GetMapping("/send-email")
     public String sendEmail(@RequestBody Map<String, String> sentEmail) {
         try {
-            for (int i = 1; i <= 10; i++) {
-                gmail.sendEmail(sentEmail.get("toEmail"), sentEmail.get("subject"), "i love you " + i + 99);
-                System.out.println("send " + i);
-            }
+            gmail.sendEmail(sentEmail.get("toEmail"), sentEmail.get("subject"), "i love you " + Math.round(Math.random() * 500));
             return "Email sent successfully.";
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -36,12 +33,15 @@ public class UsersController {
 
     @PostMapping("/signup")
     public String signup(@RequestBody Users users) throws Exception {
-        return userService.insertUser(users);
+        String response=userService.insertUser(users);
+        Long randomVerifyCode=Math.round(10000 + Math.random() * 99999);
+        userService.updateUser("users_verifycode",randomVerifyCode, "users_email", users.getUsers_email());
+        gmail.sendEmail(users.getUsers_email(),"Ecommercesystem verifyCode","your code is : "+randomVerifyCode);
+        return "Done Signup";
     }
 
     @PostMapping("/where")
     public Users userId(@RequestBody Map<String, Object> id) throws Exception {
-        System.out.println(id.get("where").toString() + id.get("id").getClass());
         return userService.findByWhere(id.get("where").toString(), id.get("id"));
     }
 
@@ -49,5 +49,19 @@ public class UsersController {
     public String signin(@RequestBody Map data, HttpServletResponse httpResponse) throws IOException {
         String response = userService.signin(data.get("email").toString(), data.get("password").toString());
         return response.equals("Done Save") ? "error in password or email" : "correct login";
+    }
+
+    @PostMapping("/generateVerifyCode")
+    public String generateVerifyCode(@RequestBody Map<String, String> email, HttpServletResponse httpResponse) throws IOException {
+        return userService.updateUser("users_verifycode", Math.round(10000 + Math.random() * 99999), "users_email", email.get("users_email"));
+    }
+
+    @PostMapping("/checkVerifyCode")
+    public String checkVerifyCode(@RequestBody Map<String, Object> data, HttpServletResponse httpResponse) throws IOException {
+        String response = userService.checkVerifyCode(data.get("users_email").toString(), data.get("users_verifycode"));
+        if (response.equals("correctVerifyCode")) {
+            userService.updateUser("users_approve",true, "users_email",  data.get("users_email").toString());
+            userService.updateUser("users_verifycode", 0, "users_email", data.get("users_email").toString());
+        } return response;
     }
 }
